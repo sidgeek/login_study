@@ -40,14 +40,24 @@ function Home() {
 
     const msUntilAlert = expMs - Date.now() - 30_000; // 30 seconds before expiry
     if (msUntilAlert <= 0) {
-      // 令牌即将过期，尝试使用refreshToken自动续期
-      void tryRefreshToken();
+      // 令牌即将过期，弹出确认框；确认则刷新，否则退出
+      const ok = window.confirm('您的登录将于30秒后过期，是否立即续期？');
+      if (ok) {
+        void tryRefreshToken();
+      } else {
+        void logout();
+      }
       return;
     }
 
     expiryAlertTimeout.current = setTimeout(() => {
-      // 到期前30秒，先尝试自动续期
-      void tryRefreshToken();
+      // 到期前30秒，弹出确认框；确认则刷新，否则退出
+      const ok = window.confirm('您的登录将于30秒后过期，是否立即续期？');
+      if (ok) {
+        void tryRefreshToken();
+      } else {
+        void logout();
+      }
       expiryAlertTimeout.current = null;
     }, msUntilAlert);
   };
@@ -88,8 +98,9 @@ function Home() {
     try {
       const refreshToken = window.localStorage.getItem('refreshToken');
       if (!refreshToken) {
-        // 无刷新令牌，提示用户
-        window.alert('您的登录将于30秒后过期，请重新登录。');
+        // 无刷新令牌，提示并退出登录
+        window.alert('暂无刷新令牌，已退出登录，请重新登录。');
+        await logout();
         return;
       }
 
@@ -115,8 +126,8 @@ function Home() {
       scheduleExpiryAlert(newAccessToken);
     } catch (err) {
       // 刷新失败时提示用户
-      window.alert('会话续期失败，请重新登录。');
-      navigate('/login');
+      window.alert('会话续期失败，已退出登录，请重新登录。');
+      await logout();
     }
   };
 
