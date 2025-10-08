@@ -25,7 +25,7 @@ app.set('authentication', {
   entity: 'user',
   service: 'users',
   strategies: ['local', 'jwt'],
-  authStrategies: ['local'],
+  authStrategies: ['jwt', 'local'],
   local: {
     usernameField: 'email',
     passwordField: 'password'

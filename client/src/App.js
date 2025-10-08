@@ -15,11 +15,8 @@ function Login() {
         email,
         password
       });
-      if (result?.accessToken) {
-        navigate('/');
-      } else {
-        alert('Login failed: no token returned');
-      }
+      console.log('Auth success:', result);
+      navigate('/');
     } catch (error) {
       alert('Error logging in: ' + error.message);
     }
