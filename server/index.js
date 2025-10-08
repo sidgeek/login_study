@@ -29,6 +29,9 @@ app.set('authentication', {
   local: {
     usernameField: 'email',
     passwordField: 'password'
+  },
+  jwtOptions: {
+    expiresIn: '1m' // 示例：改为 7 天，可用 '1h'、'30m' 等
   }
 });
 
