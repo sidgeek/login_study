@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@feathersjs/authentication": "^5.0.35",
+    "@feathersjs/authentication-local": "^5.0.35",
+    "@feathersjs/express": "^5.0.35",
+    "@feathersjs/feathers": "^5.0.35",
+    "@feathersjs/memory": "^5.0.35",
+    "@feathersjs/socketio": "^5.0.35",
+    "cors": "^2.8.5"
+  }
+}

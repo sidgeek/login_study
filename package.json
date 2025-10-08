@@ -1,0 +1,8 @@
+{
+  "name": "login_study",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "pnpm -r run start"
+  }
+}
