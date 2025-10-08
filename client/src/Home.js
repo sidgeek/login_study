@@ -40,12 +40,14 @@ function Home() {
 
     const msUntilAlert = expMs - Date.now() - 30_000; // 30 seconds before expiry
     if (msUntilAlert <= 0) {
-      window.alert('您的登录将于30秒后过期，请及时保存或重新登录。');
+      // 令牌即将过期，尝试使用refreshToken自动续期
+      void tryRefreshToken();
       return;
     }
 
     expiryAlertTimeout.current = setTimeout(() => {
-      window.alert('您的登录将于30秒后过期，请及时保存或重新登录。');
+      // 到期前30秒，先尝试自动续期
+      void tryRefreshToken();
       expiryAlertTimeout.current = null;
     }, msUntilAlert);
   };
@@ -76,8 +78,46 @@ function Home() {
       clearTimeout(expiryAlertTimeout.current);
       expiryAlertTimeout.current = null;
     }
+    window.localStorage.removeItem('refreshToken');
     await client.logout();
     navigate('/login');
+  };
+
+  // 使用刷新令牌向服务端请求新的accessToken，并更新客户端状态
+  const tryRefreshToken = async () => {
+    try {
+      const refreshToken = window.localStorage.getItem('refreshToken');
+      if (!refreshToken) {
+        // 无刷新令牌，提示用户
+        window.alert('您的登录将于30秒后过期，请重新登录。');
+        return;
+      }
+
+      const res = await fetch('http://localhost:3030/refresh-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.error || '刷新令牌失败');
+      }
+
+      const newAccessToken = data?.accessToken;
+      if (!newAccessToken) {
+        throw new Error('未返回新的访问令牌');
+      }
+
+      // 使用新的令牌更新客户端会话
+      await client.authenticate({ strategy: 'jwt', accessToken: newAccessToken });
+
+      // 重新安排下一次到期提醒
+      scheduleExpiryAlert(newAccessToken);
+    } catch (err) {
+      // 刷新失败时提示用户
+      window.alert('会话续期失败，请重新登录。');
+      navigate('/login');
+    }
   };
 
   return (
