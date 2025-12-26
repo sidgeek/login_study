@@ -1,11 +1,14 @@
 import feathers from '@feathersjs/client';
-import socketio from '@feathersjs/socketio-client';
-import io from 'socket.io-client';
+import rest from '@feathersjs/rest-client';
 
-const socket = io('http://localhost:3030');
 const client = feathers();
+const restClient = rest('http://localhost:3030');
 
-client.configure(socketio(socket));
+// 使用带 credentials 的 fetch，以支持 HttpOnly Cookie
+client.configure(restClient.fetch((url, options) => {
+  return fetch(url, { ...options, credentials: 'include' });
+}));
+
 client.configure(feathers.authentication({
   storage: window.localStorage
 }));

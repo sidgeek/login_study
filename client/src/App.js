@@ -16,10 +16,6 @@ function Login() {
         password
       });
       console.log('Auth success:', result);
-      // 保存服务端返回的刷新令牌以便后续自动续期
-      if (result && result.refreshToken) {
-        window.localStorage.setItem('refreshToken', result.refreshToken);
-      }
       navigate('/');
     } catch (error) {
       alert('Error logging in: ' + error.message);

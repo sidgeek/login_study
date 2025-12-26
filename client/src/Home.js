@@ -88,7 +88,13 @@ function Home() {
       clearTimeout(expiryAlertTimeout.current);
       expiryAlertTimeout.current = null;
     }
-    window.localStorage.removeItem('refreshToken');
+    // 调用服务端登出以清除 HttpOnly 刷新令牌 Cookie
+    try {
+      await fetch('http://localhost:3030/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (_) {}
     await client.logout();
     navigate('/login');
   };
@@ -96,18 +102,9 @@ function Home() {
   // 使用刷新令牌向服务端请求新的accessToken，并更新客户端状态
   const tryRefreshToken = async () => {
     try {
-      const refreshToken = window.localStorage.getItem('refreshToken');
-      if (!refreshToken) {
-        // 无刷新令牌，提示并退出登录
-        window.alert('暂无刷新令牌，已退出登录，请重新登录。');
-        await logout();
-        return;
-      }
-
       const res = await fetch('http://localhost:3030/refresh-token', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken })
+        credentials: 'include'
       });
       const data = await res.json();
       if (!res.ok) {

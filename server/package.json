@@ -18,6 +18,7 @@
     "@feathersjs/memory": "^5.0.35",
     "@feathersjs/socketio": "^5.0.35",
     "cors": "^2.8.5",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "cookie-parser": "^1.4.6"
   }
 }
