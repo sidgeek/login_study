@@ -6,6 +6,11 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:pull": "prisma db pull",
+    "db:studio": "prisma studio",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

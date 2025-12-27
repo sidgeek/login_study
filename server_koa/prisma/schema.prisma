@@ -17,7 +17,6 @@ model User {
   id        BigInt   @id @default(autoincrement())
   nickname  String?  @db.VarChar(64)
   avatar    String?  @db.VarChar(255)
-  bio       String?  @db.VarChar(255)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   status    Int      @default(1) @db.SmallInt
