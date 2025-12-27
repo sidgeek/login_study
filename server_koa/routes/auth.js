@@ -30,23 +30,29 @@ const authMiddleware = async (ctx, next) => {
 router.post('/login', async (ctx) => {
   const { username, password } = ctx.request.body;
   
-  const user = findUser(username, password);
+  try {
+    const user = await findUser(username, password);
 
-  if (user) {
-    // 生成 JWT Token
-    const token = jwt.sign(
-      { userId: user.userId, username: user.username },
-      JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+    if (user) {
+      // 生成 JWT Token
+      const token = jwt.sign(
+        { userId: user.userId, username: user.username },
+        JWT_SECRET,
+        { expiresIn: '1h' }
+      );
 
-    ctx.body = { 
-      message: 'Login successful',
-      token: token 
-    };
-  } else {
-    ctx.status = 401;
-    ctx.body = { error: 'Invalid credentials' };
+      ctx.body = { 
+        message: 'Login successful',
+        token: token 
+      };
+    } else {
+      ctx.status = 401;
+      ctx.body = { error: 'Invalid credentials' };
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'Internal server error' };
   }
 });
 

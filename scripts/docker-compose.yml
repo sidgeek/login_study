@@ -1,0 +1,24 @@
+services:
+  postgres:
+    container_name: postgres-db
+    image: postgres:15
+    # 若为 Apple Silicon，可指定平台以使用 arm64 架构
+    platform: linux/arm64
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=logindb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d logindb"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres-data:
+    external: true
+    name: logindb-data

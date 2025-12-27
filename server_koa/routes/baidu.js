@@ -72,7 +72,7 @@ router.get('/callback', async (ctx) => {
     }
 
     // 3. 查找或创建本地用户
-    let user = findUserByBaiduId(baiduUser.uk);
+    let user = await findUserByBaiduId(baiduUser.uk);
 
     if (!user) {
       // 用户不存在，自动注册
@@ -80,7 +80,7 @@ router.get('/callback', async (ctx) => {
       const baseName = baiduUser.netdisk_name || baiduUser.baidu_name || `user_${baiduUser.uk}`;
       const username = `baidu_${baseName}`;
 
-      user = createUser({
+      user = await createUser({
         username: username,
         password: '', // 第三方登录用户无密码
         baiduId: baiduUser.uk,
