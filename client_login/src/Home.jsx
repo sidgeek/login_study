@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Netdisk from './Netdisk';
 
 const Home = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
+  const [showNetdisk, setShowNetdisk] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,18 +46,34 @@ const Home = () => {
     <div style={styles.container}>
       <header style={styles.header}>
         <h1>Home Page</h1>
-        <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
+        <div>
+          <button 
+            onClick={() => setShowNetdisk(!showNetdisk)} 
+            style={styles.netdiskButton}
+          >
+            {showNetdisk ? 'Hide Netdisk' : 'Baidu Netdisk'}
+          </button>
+          <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
+        </div>
       </header>
       
       <main style={styles.main}>
-        {error && <p style={styles.error}>{error}</p>}
-        {data ? (
+        {showNetdisk ? (
           <div style={styles.card}>
-            <h3>Protected Data:</h3>
-            <pre>{JSON.stringify(data, null, 2)}</pre>
+            <Netdisk />
           </div>
         ) : (
-          <p>Loading...</p>
+          <>
+            {error && <p style={styles.error}>{error}</p>}
+            {data ? (
+              <div style={styles.card}>
+                <h3>Protected Data:</h3>
+                <pre>{JSON.stringify(data, null, 2)}</pre>
+              </div>
+            ) : (
+              <p>Loading...</p>
+            )}
+          </>
         )}
       </main>
     </div>
@@ -74,6 +92,15 @@ const styles = {
     marginBottom: '20px',
     borderBottom: '1px solid #eee',
     paddingBottom: '10px'
+  },
+  netdiskButton: {
+    padding: '8px 16px',
+    backgroundColor: '#007bff',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    marginRight: '10px'
   },
   logoutButton: {
     padding: '8px 16px',
