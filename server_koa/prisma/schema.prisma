@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        BigInt   @id @default(autoincrement())
+  nickname  String?  @db.VarChar(64)
+  avatar    String?  @db.VarChar(255)
+  bio       String?  @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  status    Int      @default(1) @db.SmallInt
+
+  authIdentities AuthIdentity[]
+
+  @@map("users")
+}
+
+model AuthIdentity {
+  id          BigInt   @id @default(autoincrement())
+  userId      BigInt   @map("user_id")
+  identityType String  @map("identity_type") @db.VarChar(20)
+  identifier  String   @db.VarChar(255)
+  credential  String?  @db.VarChar(255)
+  data        Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  lastLoginAt DateTime? @map("last_login_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([identityType, identifier])
+  @@map("auth_identities")
+}
